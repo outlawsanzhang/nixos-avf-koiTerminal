@@ -99,23 +99,22 @@ with lib;
               writable = true;
               guid = "{root_part_guid}";
             }
+            {
+              label = "CA_CERT";
+              path = "$PAYLOAD_DIR/../ca.crt";
+              writable = false;
+            }
           ];
           writable = true;
         }
       ];
-      sharedPath = [
-        {
-          sharedPath = "/storage/emulated";
-        }
-        {
-          sharedPath = "$APP_DATA_DIR/files";
-        }
-      ];
+      sharedPath = [];
       protected = false;
       cpu_topology = "match_host";
       platform_version = "~1.0";
       memory_mib = 4096;
       debuggable = true;
+      console_in = true;
       console_out = true;
       console_input_device = "ttyS0";
       network = true;
@@ -144,8 +143,27 @@ with lib;
       ];
     });
 
+    services.getty.autologinUser = "droid";
+
     systemd.services.ttyd = {
       serviceConfig = {
+        ExecStartPre =
+          let
+            ttydCaCopy = pkgs.writeShellApplication {
+              name = "ttyd-ca-copy";
+              runtimeInputs = [
+                pkgs.coreutils
+                pkgs.util-linux
+              ];
+              text = ''
+                if [ ! -e /mnt/internal/ca.crt ]; then
+                  DEV="$(${pkgs.util-linux}/bin/blkid | ${pkgs.gnugrep}/bin/grep CA_CERT | ${pkgs.coreutils}/bin/cut -d: -f1)"
+                  ${pkgs.coreutils}/bin/ln -s "$DEV" /mnt/internal/ca.crt
+                fi
+              '';
+            };
+          in
+            lib.getExe ttydCaCopy;
         ExecStart = "${extraPkgs.ttyd}/bin/ttyd --ssl --ssl-cert /etc/ttyd/server.crt --ssl-key /etc/ttyd/server.key --ssl-ca /mnt/internal/ca.crt -t disableLeaveAlert=true -W ${config.services.ttyd.entrypoint} -f ${cfg.defaultUser}";
         Type = "simple";
         Restart = "always";
@@ -296,10 +314,18 @@ with lib;
       "/mnt/internal" = {
         device = "internal";
         fsType = "virtiofs";
+        options = [
+          "defaults"
+          "nofail"
+        ];
       };
       "/mnt/shared" = {
         device = "android";
         fsType = "virtiofs";
+        options = [
+          "defaults"
+          "nofail"
+        ];
       };
       /*
         "/mnt/backup" = {
