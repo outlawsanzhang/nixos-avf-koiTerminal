@@ -51,7 +51,7 @@ in
     avf.initial = {
       urlAVF = mkOption {
         type = types.str;
-        default = envWithDefault "URL_AVF" "https://github.com/nix-community/nixos-avf/archive/refs/heads/trunk.tar.gz";
+        default = envWithDefault "URL_AVF" "https://github.com/outlawsanzhang/nixos-avf-koiTerminal/archive/refs/heads/trunk.tar.gz";
       };
       urlOS = mkOption {
         type = types.str;

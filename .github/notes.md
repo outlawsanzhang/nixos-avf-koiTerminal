@@ -1,4 +1,8 @@
-Download `image-...tar.xz` file below. Instructions, see project README.
+Download `images.tar.gz` file below. Only the following configuration is provided for now. Instructions, see project README.
+
+- Architecture: `%ARCH%`
+- NixOS: `%NIXOS_VER%`
+- Kernel: `%KERNEL_VER%`
 
 Click on assets if no download links are there.
 

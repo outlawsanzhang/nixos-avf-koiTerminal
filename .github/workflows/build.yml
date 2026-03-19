@@ -1,12 +1,14 @@
-name: Test pull request
+name: Test updates
 
 on:
   push:
+    branches-ignore:
+      - trunk
   pull_request:
 
 jobs:
   matrix:
-    runs-on: nscloud-ubuntu-22.04-amd64-2x2
+    runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -23,11 +25,12 @@ jobs:
       matrix:
         arch:
         - id: aarch64
-          os: nscloud-ubuntu-22.04-arm64-8x16
-        - id: x86_64
-          os: nscloud-ubuntu-22.04-amd64-8x16
+          os: ubuntu-22.04-arm
+        # - id: x86_64
+        #   os: ubuntu-22.04
         nixos: ${{ fromJson(needs.matrix.outputs.matrix) }}
     runs-on: ${{ matrix.arch.os }}
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v31
@@ -40,7 +43,7 @@ jobs:
             system-features = nixos-test benchmark big-parallel kvm
       - uses: cachix/cachix-action@v16
         with:
-          name: nix-community
+          name: nix-avf-osz
       # path /home/runner should have permissions 755, but had permissions 750. Consider running 'chmod o+rx /home/runner'.
       - run: chmod o+rx /home/runner
       - run: ./.github/build.sh ${{ matrix.nixos }} ${{ matrix.arch.id }}

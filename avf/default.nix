@@ -230,11 +230,11 @@ with lib;
     system.build.vmConfig = vmConfig.generate "vm_config.json" cfg.vmConfig;
 
     nix.settings.substituters = [
-      "https://nix-community.cachix.org"
+      "https://nix-avf-osz.cachix.org"
     ];
 
     nix.settings.trusted-public-keys = [
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "nix-avf-osz.cachix.org-1:0RR+t8eVakbjBPEU1QQM8iZsz6z2oUkrXiD3oNGYEwc="
     ];
 
     boot.growPartition = true;

@@ -7,14 +7,14 @@ ARCH="$2"
 TAG="nixos-$NIXOS"
 
 if [ -v CACHIX_AUTH_TOKEN ]; then
-  CACHIX=(cachix watch-exec nix-community --)
+  CACHIX=(cachix watch-exec nix-avf-osz --)
 else
   CACHIX=()
 fi
 
 F_CHANNEL="nixos-channel-$NIXOS-$ARCH.tar.xz"
 F_AVF="avf-channel-$NIXOS-$ARCH.tar.xz"
-F_IMAGE="image-$NIXOS-$ARCH.tar.gz"
+F_IMAGE="images.tar.gz"
 
 nix-channel --add "https://github.com/NixOS/nixpkgs/archive/refs/heads/nixos-$NIXOS.tar.gz" nixpkgs
 nix-channel --update
@@ -27,8 +27,14 @@ nix-channel --update
 
 export INITIAL_RELEASE="$NIXOS"
 export INITIAL_ARCH="$ARCH"
-export INITIAL_URL_OS="https://github.com/nix-community/nixos-avf/releases/download/nixos-$NIXOS/$F_CHANNEL"
-export INITIAL_URL_AVF="https://github.com/nix-community/nixos-avf/releases/download/nixos-$NIXOS/$F_AVF"
+export INITIAL_URL_OS="https://github.com/outlawsanzhang/nixos-avf-koiTerminal/releases/download/nixos-$NIXOS/$F_CHANNEL"
+export INITIAL_URL_AVF="https://github.com/outlawsanzhang/nixos-avf-koiTerminal/releases/download/nixos-$NIXOS/$F_AVF"
+NIXOS_VER="$(nix eval --extra-experimental-features nix-command --impure --expr "let init = import ./initial.nix; in init.config.system.nixos.version")"
+NIXOS_VER="${NIXOS_VER:1:-1}"
+KERNEL_VER="$(nix eval --extra-experimental-features nix-command --impure --expr "let init = import ./initial.nix; in init.pkgs.linuxPackages_6_1.kernel.version")"
+KERNEL_VER="${KERNEL_VER:1:-1}"
+sed -i -e "s;%ARCH%;${ARCH//;/_};g" -e "s;%NIXOS_VER%;${NIXOS_VER//;/_};g" -e "s;%KERNEL_VER%;${KERNEL_VER//;/_};g" ./.github/notes.md
+cat ./.github/notes.md
 
 "${CACHIX[@]}" nix-build initial.nix -A config.system.build.initialRamdisk -A config.system.build.kernel
 "${CACHIX[@]}" nix-build initial.nix -A config.system.build.toplevel
