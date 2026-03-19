@@ -27,9 +27,9 @@ user=$(_adb shell am get-current-user)
 # Identify file to download
 arch=$(with_root getprop ro.bionic.arch)
 if [ ${arch} == "arm64" ]; then
-  src=https://github.com/nix-community/nixos-avf/releases/download/nixos-unstable/image-unstable-aarch64.tar.gz
+  src=https://github.com/outlawsanzhang/nixos-avf-koiTerminal/releases/download/nixos-unstable/image-unstable-aarch64.tar.gz
 else
-  src=https://github.com/nix-community/nixos-avf/releases/download/nixos-unstable/image-unstable-x86_64.tar.gz
+  src=https://github.com/outlawsanzhang/nixos-avf-koiTerminal/releases/download/nixos-unstable/image-unstable-x86_64.tar.gz
 fi
 
 # Download

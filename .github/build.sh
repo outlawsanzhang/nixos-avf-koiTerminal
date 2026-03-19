@@ -7,7 +7,7 @@ ARCH="$2"
 TAG="nixos-$NIXOS"
 
 if [ -v CACHIX_AUTH_TOKEN ]; then
-  CACHIX=(cachix watch-exec nix-community --)
+  CACHIX=(cachix watch-exec nix-avf-osz --)
 else
   CACHIX=()
 fi
@@ -27,8 +27,8 @@ nix-channel --update
 
 export INITIAL_RELEASE="$NIXOS"
 export INITIAL_ARCH="$ARCH"
-export INITIAL_URL_OS="https://github.com/nix-community/nixos-avf/releases/download/nixos-$NIXOS/$F_CHANNEL"
-export INITIAL_URL_AVF="https://github.com/nix-community/nixos-avf/releases/download/nixos-$NIXOS/$F_AVF"
+export INITIAL_URL_OS="https://github.com/outlawsanzhang/nixos-avf-koiTerminal/releases/download/nixos-$NIXOS/$F_CHANNEL"
+export INITIAL_URL_AVF="https://github.com/outlawsanzhang/nixos-avf-koiTerminal/releases/download/nixos-$NIXOS/$F_AVF"
 
 "${CACHIX[@]}" nix-build initial.nix -A config.system.build.initialRamdisk -A config.system.build.kernel
 "${CACHIX[@]}" nix-build initial.nix -A config.system.build.toplevel

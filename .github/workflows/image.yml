@@ -1,8 +1,8 @@
 name: Build image
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
+  # schedule:
+  #   - cron: '0 0 * * 0'
   workflow_dispatch:
   push:
     branches:
@@ -10,16 +10,16 @@ on:
 
 jobs:
   matrix:
-    runs-on: nscloud-ubuntu-22.04-amd64-2x2
+    runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: 'trunk'
-      - uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
+      #- uses: cachix/install-nix-action@v31
+      #  with:
+      #    nix_path: nixpkgs=channel:nixos-unstable
       - run: ./.github/get-channels.sh
         id: set-matrix
   update:
@@ -29,9 +29,9 @@ jobs:
       matrix:
         arch:
         - id: aarch64
-          os: nscloud-ubuntu-22.04-arm64-8x16
-        - id: x86_64
-          os: nscloud-ubuntu-22.04-amd64-8x16
+          os: ubuntu-22.04-arm
+        # - id: x86_64
+        #   os: ubuntu-22.04
         nixos: ${{ fromJson(needs.matrix.outputs.matrix) }}
     permissions:
       # Give the default GITHUB_TOKEN write permission to create releases
@@ -51,7 +51,7 @@ jobs:
             system-features = nixos-test benchmark big-parallel kvm
       - uses: cachix/cachix-action@v16
         with:
-          name: nix-community
+          name: nix-avf-osz
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # path /home/runner should have permissions 755, but had permissions 750. Consider running 'chmod o+rx /home/runner'.
       - run: chmod o+rx /home/runner

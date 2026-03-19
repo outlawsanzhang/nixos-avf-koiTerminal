@@ -1,4 +1,9 @@
-# nixos-avf
+This is a fork of [nixos-avf](https://github.com/nix-community/nixos-avf) to be used in koiTerminal.
+
+Please see [koiTerminal](https://github.com/outlawsanzhang/koiTerminal).
+
+-----------------
+# nixos-avf Original Documentation
 
 Android Virtualization Framework is a new virtualization environment for Android
 
